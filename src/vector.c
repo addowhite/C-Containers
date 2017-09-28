@@ -109,7 +109,7 @@ uint vector_insert(Vector *vector, uint index, void *value) {
 
 int vector_find_index(Vector *vector, void *value) {
     for (uint i = 0; i < vector->size; ++i)
-        if (vector->data[i] == value)
+        if (vector->data[i] == (uchar *)value)
             return i;
     return -1;
 }
@@ -127,8 +127,8 @@ uint vector_push_vector(Vector *dst_vector, Vector *src_vector) {
     return NO_ERROR;
 }
 
-void vector_clear(Vector *vector) {
-    vector_resize(vector, 0);
+uint vector_clear(Vector *vector) {
+    return vector_resize(vector, 0);
 }
 
 void vector_destroy(Vector *vector) {

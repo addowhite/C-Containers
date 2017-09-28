@@ -27,7 +27,7 @@ uint vector_set(Vector *vector, uint index, void *value);
 uint vector_insert(Vector *vector, uint index, void *value);
 int vector_find_index(Vector *vector, void *value);
 uint vector_push_vector(Vector *dst_vector, Vector *src_vector);
-void vector_clear(Vector *vector);
+uint vector_clear(Vector *vector);
 void vector_destroy();
 
 #endif // _VECTOR_H_
