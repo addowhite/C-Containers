@@ -1,9 +1,9 @@
 #ifndef _ITER_H_
 #define _ITER_H_
 
-#include "Vector.h"
-#include "Grid.h"
-#include "HashMap.h"
+#include "vector.h"
+#include "grid.h"
+#include "hashmap.h"
 
 #ifndef NULL
 #define NULL (void *)0

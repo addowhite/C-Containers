@@ -9,7 +9,7 @@ TEST_DIR := ./test
 INCLUDES := -I ./include -I C:/MinGW/include
 SOURCES := $(wildcard $(SRC_DIR)/*.c) $(wildcard $(TEST_DIR)/*.c)
 OBJECTS := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SOURCES))
-TARGET := test
+TARGET := test_containers
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@echo [COMPILE] $<
@@ -19,4 +19,4 @@ $(TARGET): $(OBJECTS)
 	@echo [INFO] Creating Executable [$(TARGET)]
 	@echo [LINK]
 	@$(CC) -o $@ $^ $(INCLUDES)
-	@$(TARGET)
+	@./$(TARGET)

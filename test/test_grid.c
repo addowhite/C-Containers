@@ -55,9 +55,6 @@ uint test_grid_set(void) {
   if (grid_get(grid, 0, height) != NULL)
     return test_failed("test_grid_set", "Attempt to retrieve out of bounds value apparently successful", __FILE__, __LINE__);
 
-  int test = 5;
-  grid_set(grid, 55, 55, &test);
-
   for (uint y = 0; y < height; ++y)
     for (uint x = 0; x < width; ++x)
       if (*(int *)grid_get(grid, x, y) != data[y][x])

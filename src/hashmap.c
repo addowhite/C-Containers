@@ -39,7 +39,7 @@ HashMap * hashmap_create() {
     new_hashmap->type = ITER_TYPE_HASHMAP;
     new_hashmap->linearized = vector_create();
     if (!new_hashmap->linearized) {
-      fprintf(stderr, "%s: Failed to create vector for hashmap\n");
+      fprintf(stderr, "%s: Failed to create vector for hashmap\n", __FILE__);
       free(new_hashmap);
       return NULL;
     }
