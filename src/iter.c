@@ -8,7 +8,7 @@ Vector * linearize_iterable(Iterable *iterable) {
             break;
 
         case ITER_TYPE_GRID:
-            return *(Vector **)((char *)iterable + sizeof(IterType));
+            return (Vector *)iterable->data;
             break;
 
         case ITER_TYPE_HASHMAP:

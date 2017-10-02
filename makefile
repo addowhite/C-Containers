@@ -6,7 +6,7 @@ INC_DIR := ./include
 OBJ_DIR := ./obj
 TEST_DIR := ./test
 
-INCLUDES := -I ./include -I C:/MinGW/include
+INCLUDES := -I $(INC_DIR) -I C:/MinGW/include
 SOURCES := $(wildcard $(SRC_DIR)/*.c) $(wildcard $(TEST_DIR)/*.c)
 OBJECTS := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SOURCES))
 TARGET := test_containers
