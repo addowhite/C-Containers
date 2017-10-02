@@ -13,8 +13,8 @@ Vector * linearize_iterable(Iterable *iterable) {
 
         case ITER_TYPE_HASHMAP:
             {
-                Vector *linearized_vector = *(Vector **)((char *)iterable + sizeof(IterType));
-                Vector **bins = (Vector **)((char *)iterable + sizeof(IterType) + sizeof(Vector *));
+                Vector *linearized_vector = (Vector *)iterable->data;
+                Vector **bins = ((Vector **)&iterable->data) + 1;
                 vector_clear(linearized_vector);
                 for (uint i = 0; i < HASHMAP_BIN_COUNT; ++i)
                     if (bins[i]) vector_push_vector(linearized_vector, bins[i]);
