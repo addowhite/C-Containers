@@ -38,6 +38,9 @@
                                             for (uchar **FOREACH_PTR_##iter = iterable->data, **FOREACH_END_##iter = iterable->data + iterable->size; FOREACH_PTR_##iter != FOREACH_END_##iter; ++FOREACH_PTR_##iter)\
                                                 for (type* iter = (type*)(*FOREACH_PTR_##iter), *FOREACH_FLAG2_##iter = NULL; FOREACH_FLAG2_##iter == NULL; FOREACH_FLAG2_##iter = (void *)1)
 //*/
+
+#define range(index, start, end) (int index = start, END_##index = range_end(index, end); index != END_##index; index = range_next(index, END_##index))
+
 typedef enum IterType {
     ITER_TYPE_VECTOR,
     ITER_TYPE_GRID,
@@ -50,6 +53,8 @@ typedef struct Iterable {
     uint size;
 } Iterable;
 
+static int range_next(int index, int end) { return (index < end) ? ++index : --index; };
+static int range_end(int start, int end) { return (start < end) ? ++end : --start; };
 Vector * linearize_iterable(Iterable *iterable);
 
 #endif // _ITER_H_
