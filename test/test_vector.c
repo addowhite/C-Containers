@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "test_vector.h"
 #include "vector.h"
+#include "iter.h"
 
 static uint test_vector_create(void) {
   Vector *vector = vector_create();
@@ -48,7 +49,7 @@ static uint test_vector_resize() {
   if (vector_capacity(vector) != 150)
     return test_failed("test_vector_resize", "Capacity after resize operation incorrect", __FILE__, __LINE__);
 
-  for (uint i = 0; i < vector_size(vector); ++i)
+  for range(i, 0, vector_size(vector) - 1)
     if (vector_get(vector, i) != NULL)
       return test_failed("test_vector_resize", "Values not correctly initialised", __FILE__, __LINE__);
 
@@ -61,7 +62,7 @@ static uint test_vector_push_back(void) {
 
   uint value_count = 5;
   int values[] = { 100, 101, 0, 0x11111111, 69 };
-  for (uint i = 0; i < value_count; ++i) {
+  for range(i, 0, value_count - 1) {
     if (!vector_push_back(vector, &values[i]))
       return test_failed("test_vector_push_back", "Failed to push value to vector", __FILE__, __LINE__);
 
@@ -73,7 +74,7 @@ static uint test_vector_push_back(void) {
   if (vector_size(vector) != value_count)
     return test_failed("test_vector_push_back", "Vector size incorrect after pushing values", __FILE__, __LINE__);
 
-  for (uint i = 0; i < value_count; ++i) {
+  for range(i, 0, value_count - 1) {
     int *current_value = vector_get(vector, i);
 
     if (current_value == NULL)
@@ -93,7 +94,7 @@ static uint test_vector_set(void) {
   int values[] = { 0, -1, 100, -101, 0x11111111 };
 
   vector_resize(vector, 5);
-  for (uint i = 0; i < vector_size(vector); ++i)
+  for range(i, 0, vector_size(vector) - 1)
     if (!vector_set(vector, i, &values[i]))
       return test_failed("test_vector_set", "Failed to set value", __FILE__, __LINE__);
 
@@ -101,7 +102,7 @@ static uint test_vector_set(void) {
   if (vector_get(vector, 6) != NULL)
     return test_failed("test_vector_set", "Attempted deliberate write out of bounds was supposedly successful", __FILE__, __LINE__);
 
-  for (uint i = 0; i < vector_size(vector); ++i)
+  for range(i, 0, vector_size(vector) - 1)
     if (*(int *)vector_get(vector, i) != values[i])
       return test_failed("test_vector_set", "Incorrect value found after settings values", __FILE__, __LINE__);
 
@@ -113,17 +114,17 @@ static uint test_vector_insert(void) {
   Vector *vector = vector_create();
 
   int values[] = { 0x11111111, 0, 7, 999, 12345 };
-  for (uint i = 0; i < 5; ++i)
+  for range(i, 0, 4)
     vector_push_back(vector, &values[i]);
 
   int new_indices[] = { 0, 2, 7 };
   int new_values[] = { 3, 2, 77 };
-  for (uint i = 0; i < 3; ++i)
+  for range(i, 0, 2)
     if (!vector_insert(vector, new_indices[i], &new_values[i]))
       return test_failed("test_vector_insert", "Failed to insert value", __FILE__, __LINE__);
 
   int final_values[] = { 3, 0x11111111, 2, 0, 7, 999, 12345, 77 };
-  for (uint i = 0; i < 8; ++i)
+  for range(i, 0, 7)
     if (*(int *)vector_get(vector, i) != final_values[i])
       return test_failed("test_vector_insert", "Incorrect value found after inserting values", __FILE__, __LINE__);
 
@@ -139,11 +140,11 @@ static uint test_vector_find_index(void) {
   Vector *vector = vector_create();
 
   int values[] = { 3, 0x11111111, 2, 0, 7, 999, 12345, 77 };
-  for (uint i = 0; i < 8; ++i)
+  for range(i, 0, 7)
     vector_push_back(vector, &values[i]);
 
   uint find_indices[] = { 0, 2, 7 };
-  for (uint i = 0; i < 3; ++i)
+  for range(i, 0, 2)
     if (vector_find_index(vector, &values[find_indices[i]]) != find_indices[i])
       return test_failed("test_vector_find_index", "Incorrect index returned", __FILE__, __LINE__);
 
@@ -159,13 +160,13 @@ static uint test_vector_push_vector(void) {
   int values[] = { 0, -1, 100, -101, 0x11111111, -99999, 345215, 21, -21, 2 };
 
   Vector *vector_a = vector_create(), *vector_b = vector_create();
-  for (uint i = 0; i < 10; ++i)
+  for range(i, 0, 9)
     vector_push_back((i < 5 ? vector_a : vector_b), &values[i]);
 
   if (!vector_push_vector(vector_a, vector_b))
     return test_failed("test_vector_push_vector", "Failed to push vector to another vector", __FILE__, __LINE__);
 
-  for (uint i = 0; i < 10; ++i)
+  for range(i, 0, 9)
     if (*(int *)vector_get(vector_a, i) != values[i])
       return test_failed("test_vector_push_vector", "Incorrect value returned after pushing vector to another vector", __FILE__, __LINE__);
 
@@ -182,7 +183,7 @@ static uint test_vector_clear(void) {
   Vector *vector = vector_create();
 
   int values[] = { 0, -1, 100, -101, 0x11111111, -99999, 345215, 21, -21, 2 };
-  for (uint i = 0; i < 10; ++i)
+  for range(i, 0, 9)
     vector_push_back(vector, &values[i]);
 
   if (!vector_clear(vector))
@@ -194,7 +195,7 @@ static uint test_vector_clear(void) {
   if (vector_capacity(vector) != 16)
     return test_failed("test_vector_clear", "Capacity size after clearing vector", __FILE__, __LINE__);
 
-  for (uint i = 0; i < 10; ++i) {
+  for range(i, 0, 9) {
     fprintf(stderr, "Expecting read out of bounds for test...\n");
     if (vector_get(vector, i) != NULL)
       return test_failed("test_vector_clear", "Value was not NULL after clearing vector", __FILE__, __LINE__);

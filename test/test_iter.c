@@ -2,18 +2,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+#include "test_utils.h"
 #include "test_iter.h"
 #include "iter.h"
 #include "vector.h"
 #include "grid.h"
 #include "hashmap.h"
-
-static char * string_fill_random(char *str, uint count) {
-  char base = 'A';
-  for (uint i = 0; i < count; ++i)
-    str[i] = base + rand() % 26;
-  return str;
-}
 
 static uint test_iter_vector(void) {
 	Vector *vector = vector_create();
@@ -153,10 +147,10 @@ uint test_iter(void) {
 	time_t t;
 	srand((uint) time(&t));
 
-	CHECK_TEST(test_iter_vector());
-	CHECK_TEST(test_iter_grid());
-  CHECK_TEST(test_iter_hashmap());
   CHECK_TEST(test_iter_range());
+  CHECK_TEST(test_iter_vector());
+  CHECK_TEST(test_iter_grid());
+  CHECK_TEST(test_iter_hashmap());
 
 	printf("All iter tests passed!\n");
 }

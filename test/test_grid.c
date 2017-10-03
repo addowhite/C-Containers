@@ -2,8 +2,9 @@
 #include <stdio.h>
 #include "test_grid.h"
 #include "grid.h"
+#include "iter.h"
 
-uint test_grid_create(void) {
+static uint test_grid_create(void) {
   Grid *grid = grid_create(10, 5);
 
   if (grid == NULL)
@@ -32,19 +33,19 @@ uint test_grid_create(void) {
   return SUCCESS;
 }
 
-uint test_grid_set(void) {
+static uint test_grid_set(void) {
   uint width = 100, height = 100;
 
   int data[100][100];
-  for (uint y = 0; y < height; ++y)
-    for (uint x = 0; x < width; ++x)
-      data[y][x] = rand() % 2000 - 1000;
+  for range(x, 0, width - 1)
+    for range(y, 0, height - 1)
+      data[x][y] = rand() % 2000 - 1000;
 
   Grid *grid = grid_create(width, height);
 
-  for (uint y = 0; y < height; ++y)
-    for (uint x = 0; x < width; ++x)
-      if (!grid_set(grid, x, y, &data[y][x]))
+  for range(x, 0, width - 1)
+    for range(y, 0, height - 1)
+      if (!grid_set(grid, x, y, &data[x][y]))
         return test_failed("test_grid_set", "Failed to set grid value", __FILE__, __LINE__);
 
   fprintf(stderr, "Expecting read out of bounds for test...\n");
@@ -55,9 +56,9 @@ uint test_grid_set(void) {
   if (grid_get(grid, 0, height) != NULL)
     return test_failed("test_grid_set", "Attempt to retrieve out of bounds value apparently successful", __FILE__, __LINE__);
 
-  for (uint y = 0; y < height; ++y)
-    for (uint x = 0; x < width; ++x)
-      if (*(int *)grid_get(grid, x, y) != data[y][x])
+  for range(x, 0, width - 1)
+    for range(y, 0, height - 1)
+      if (*(int *)grid_get(grid, x, y) != data[x][y])
         return test_failed("test_grid_set", "Incorrect value retrieved after setting grid values", __FILE__, __LINE__);
 
   grid_destroy(grid);
