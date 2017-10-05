@@ -1,8 +1,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 #include "vector.h"
 #include "iter.h"
+#include "utils.h"
 
 struct PrivateVector {
     IterType type;
@@ -129,6 +131,34 @@ uint vector_push_vector(Vector *dst_vector, Vector *src_vector) {
 
 uint vector_clear(Vector *vector) {
     return vector_resize(vector, 0);
+}
+
+uint vector_copy(Vector *src_vector, uint src_index, Vector *dst_vector, uint dst_index, uint length) {
+    memmove(&dst_vector->data[dst_index], &src_vector->data[src_index], sizeof(*(src_vector->data)) * length);
+    return NO_ERROR;
+}
+
+uint vector_move(Vector *src_vector, uint src_index, Vector *dst_vector, uint dst_index, uint length) {
+    uint src_length = vector_size(src_vector), dst_length = vector_size(dst_vector);
+
+    uint safe_length = min(length, dst_length - dst_index);
+
+    if (!vector_copy(src_vector, src_index, dst_vector, dst_index, safe_length)) {
+        fprintf(stderr, "%s: Failed to copy vector during move operation\n", __FILE__);
+        return ERROR;
+    }
+    int diff = dst_index - src_index;
+    if (src_vector == dst_vector && abs(diff) < length) {
+        uint count = abs(diff);
+        memset(src_vector->data + src_index + ((diff < 0) ? safe_length - count : 0), 0, sizeof(src_vector->data) * count);
+    } else {
+        memset(src_vector->data + src_index, 0, sizeof(src_vector->data) * length);
+    }
+    return NO_ERROR;
+}
+
+uint vector_erase(Vector *vector, uint index, uint length) {
+    memset(vector->data + index, 0, sizeof(vector->data) * length);
 }
 
 void vector_destroy(Vector *vector) {

@@ -28,6 +28,9 @@ uint vector_insert(Vector *vector, uint index, void *value);
 int vector_find_index(Vector *vector, void *value);
 uint vector_push_vector(Vector *dst_vector, Vector *src_vector);
 uint vector_clear(Vector *vector);
+uint vector_copy(Vector *src_vector, uint src_index, Vector *dst_vector, uint dst_index, uint length);
+uint vector_move(Vector *src_vector, uint src_index, Vector *dst_vector, uint dst_index, uint length);
+uint vector_erase(Vector *vector, uint index, uint length);
 void vector_destroy();
 
 #endif // _VECTOR_H_

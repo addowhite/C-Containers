@@ -53,8 +53,8 @@ typedef struct Iterable {
     uint size;
 } Iterable;
 
-static int range_next(int index, int end) { return (index < end) ? ++index : --index; };
-static int range_end(int start, int end) { return (start < end) ? ++end : --start; };
+static int range_next(int index, int end) { return (end > index) ? ++index : --index; };
+static int range_end(int start, int end) { return (end > start) ? ++end : --end; };
 Vector * linearize_iterable(Iterable *iterable);
 
 #endif // _ITER_H_

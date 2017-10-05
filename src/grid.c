@@ -4,6 +4,7 @@
 #include "iter.h"
 #include "vector.h"
 #include "grid.h"
+#include "utils.h"
 
 struct PrivateGrid {
     IterType type;
@@ -57,6 +58,28 @@ uint grid_set(Grid *grid, uint x, uint y, void *value) {
         return ERROR;
     }
     return vector_set(grid->data, y * grid->width + x, value);
+}
+
+uint grid_shift(Grid *grid, int offset_x, int offset_y) {
+    uint width = grid_get_width(grid), height = grid_get_height(grid);
+
+    if (offset_y != 0) {
+        if (!vector_move(grid->data, 0, grid->data, width * offset_y, width * height)) {
+            fprintf(stderr, "%s: Failed to move vector data when shifting grid\n", __FILE__);
+            return ERROR;
+        }
+    }
+
+    if (offset_x != 0) {
+        if (!vector_move(grid->data, max(0, -offset_x), grid->data, max(0, offset_x), width * height)) {
+            fprintf(stderr, "%s: Failed to move vector data when shifting grid\n", __FILE__);
+            return ERROR;
+        }
+
+        for range(y, 0, height - 1)
+            vector_erase(grid->data, y * width + ((offset_x > 0) ? 0 : width + offset_x), abs(offset_x));
+    }
+    return NO_ERROR;
 }
 
 void grid_destroy(Grid *grid) {

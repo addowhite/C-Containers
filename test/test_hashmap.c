@@ -1,4 +1,6 @@
+#include <stdlib.h>
 #include <stdio.h>
+#include "iter.h"
 #include "test_utils.h"
 #include "test_hashmap.h"
 #include "hashmap.h"

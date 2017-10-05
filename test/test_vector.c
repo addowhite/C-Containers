@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <stdio.h>
 #include "test_vector.h"
 #include "vector.h"
@@ -205,6 +206,106 @@ static uint test_vector_clear(void) {
   return SUCCESS;
 }
 
+static uint test_vector_copy(void) {
+  uint data_length = 100;
+  int data[100];
+  for range(i, 0, data_length - 1)
+    data[i] = rand() % 0x11111111;
+
+  Vector *vector = vector_create();
+
+  for range(i, 0, data_length - 1)
+    vector_push_back(vector, &data[i]);
+
+  vector_copy(vector, 90, vector, 0, 10);
+
+  for range(i, 0, 9)
+    if (*(int *)vector_get(vector, i) != data[90 + i])
+      return test_failed("test_vector_copy", "Incorrect value after copying to vector", __FILE__, __LINE__);
+
+  vector_destroy(vector);
+}
+
+static uint test_vector_move(void) {
+  uint data_length = 100;
+  int data[100];
+  for range(i, 0, data_length - 1)
+    data[i] = rand() % 0x11111111;
+
+  Vector *vector = vector_create();
+
+  for range(i, 0, data_length - 1)
+    vector_push_back(vector, &data[i]);
+
+  vector_move(vector, 90, vector, 0, 10);
+
+  for range(i, 0, 9)
+    if (*(int *)vector_get(vector, i) != data[90 + i])
+      return test_failed("test_vector_move", "Incorrect value after moving to vector", __FILE__, __LINE__);
+
+  for range(i, 90, 99)
+    if (vector_get(vector, i) != NULL)
+      return test_failed("test_vector_move", "Value not cleared after moving", __FILE__, __LINE__);
+
+  vector_move(vector, 50, vector, 45, 10);
+
+  for range(i, 45, 54)
+    if (*(int *)vector_get(vector, i) != data[i + 5])
+      return test_failed("test_vector_move", "Incorrect value after moving to vector", __FILE__, __LINE__);
+
+  for range(i, 55, 59)
+    if (vector_get(vector, i) != NULL)
+      return test_failed("test_vector_move", "Value not cleared after moving", __FILE__, __LINE__);
+
+  vector_move(vector, 60, vector, 65, 10);
+
+  for range(i, 65, 74)
+    if (*(int *)vector_get(vector, i) != data[i - 5])
+      return test_failed("test_vector_move", "Incorrect value after moving to vector", __FILE__, __LINE__);
+
+  for range(i, 60, 64)
+    if (vector_get(vector, i) != NULL)
+      return test_failed("test_vector_move", "Value not cleared after moving", __FILE__, __LINE__);
+
+  vector_destroy(vector);
+}
+
+static uint test_vector_erase(void) {
+  Vector *vector = vector_create();
+
+  if (!vector)
+    return test_failed("test_vector_erase", "Failed to create vector for test", __FILE__, __LINE__);
+
+  uint data_length = 10;
+  int data[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+
+  for range(i, 0, data_length - 1)
+    vector_push_back(vector, &data[i]);
+
+  vector_erase(vector, 0, 3);
+
+  for range(i, 0, 2)
+    if (vector_get(vector, i) != NULL)
+      return test_failed("test_vector_erase", "Value was not erased", __FILE__, __LINE__);
+
+  for range(i, 3, data_length - 1)
+    if (vector_get(vector, i) != &data[i])
+      return test_failed("test_vector_erase", "Incorrect value after erasing from vector", __FILE__, __LINE__);
+
+  vector_erase(vector, 7, 3);
+
+  for range(i, 7, 9)
+    if (vector_get(vector, i) != NULL)
+      return test_failed("test_vector_erase", "Value was not erased", __FILE__, __LINE__);
+
+  for range(i, 3, data_length - 4)
+    if (vector_get(vector, i) != &data[i])
+      return test_failed("test_vector_erase", "Incorrect value after erasing from vector", __FILE__, __LINE__);
+
+  vector_destroy(vector);
+  return SUCCESS;
+}
+
 uint test_vector(void) {
   printf("\nTesting vector...\n");
 
@@ -216,6 +317,9 @@ uint test_vector(void) {
   CHECK_TEST(test_vector_find_index());
   CHECK_TEST(test_vector_push_vector());
   CHECK_TEST(test_vector_clear());
+  CHECK_TEST(test_vector_copy());
+  CHECK_TEST(test_vector_move());
+  CHECK_TEST(test_vector_erase());
 
   printf("All vector tests passed!\n");
   return SUCCESS;

@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <time.h>
 #include "test_utils.h"
 #include "test_iter.h"
 #include "iter.h"
@@ -103,7 +102,7 @@ static uint test_iter_range(void) {
 
   // Test iterating backward
   {
-    uint test_index = 10;
+    int test_index = 10;
     for range(i, 10, 0)
       if (i != test_index--)
         return test_failed("test_iter_range", "Index was incorrect when iterating range", __FILE__, __LINE__);
@@ -142,10 +141,6 @@ static uint test_iter_range(void) {
 
 uint test_iter(void) {
 	printf("\nTesting iter...\n");
-
-	// Set random seed
-	time_t t;
-	srand((uint) time(&t));
 
   CHECK_TEST(test_iter_range());
   CHECK_TEST(test_iter_vector());

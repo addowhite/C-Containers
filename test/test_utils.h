@@ -16,6 +16,6 @@
 #define CHECK_TEST(func) if (!func) return FAILURE;
 
 uint test_failed(const char *test_name, const char *failure_reason, const char *file_name, uint line_number);
-static char * string_fill_random(char *str, uint count);
+char * string_fill_random(char *str, uint count);
 
 #endif // _TEST_UTILS_H_

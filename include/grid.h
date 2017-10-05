@@ -20,6 +20,7 @@ uint grid_get_width(Grid *grid);
 uint grid_get_height(Grid *grid);
 void * grid_get(Grid *grid, uint x, uint y);
 uint grid_set(Grid *grid, uint x, uint y, void *value);
+uint grid_shift(Grid *grid, int offset_x, int offset_y);
 void grid_destroy();
 
 #endif // _GRID_H_
