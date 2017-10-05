@@ -67,17 +67,17 @@ static uint test_grid_set(void) {
 }
 
 static uint test_grid_shift(void) {
-  uint width = 3, height = 3;
+  uint width = 100, height = 100;
 
-  int data[3][3];
+  int data[100][100];
   for range(x, 0, width - 1)
     for range(y, 0, height - 1)
       data[x][y] = rand() % 10;
 
   Grid *grid = grid_create(width, height);
 
-  for range(shift_offset_y, 2, -2) {
-    for range(shift_offset_x, 2, -2) {
+  for range(shift_offset_y, 10, -10) {
+    for range(shift_offset_x, 10, -10) {
 
       // Set the data
       for range(x, 0, width - 1)
