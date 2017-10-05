@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "iter.h"
 #include "test_utils.h"
 #include "test_hashmap.h"
@@ -28,8 +29,11 @@ static uint test_hashmap_set(void) {
     hashmap_set(hashmap, keys[i], &values[i]);
   }
 
-  foreach(HashMapValueContainer, hashmap, iter)
-    if (hashmap_get(hashmap, iter->key) != iter->value)
+  char keys_copy[20][11];
+  memcpy(keys_copy, keys, 20 * 11);
+
+  for range(i, 0, 19)
+    if (hashmap_get(hashmap, keys_copy[i]) != hashmap_get(hashmap, keys[i]))
       return test_failed("test_iter_hashmap", "Key-value pair incorrect", __FILE__, __LINE__);
 
   hashmap_destroy(hashmap);

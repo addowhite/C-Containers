@@ -4,6 +4,7 @@
 #include "hashmap.h"
 #include "vector.h"
 #include "iter.h"
+#include "utils.h"
 
 struct PrivateHashMap {
     IterType type;
@@ -69,7 +70,7 @@ uint hashmap_set(HashMap *hashmap, const char *key, void *value) {
             fprintf(stderr, "%s: Failed to create ValueContainer for hashmap\n", __FILE__);
             return ERROR;
         }
-        value_container->key = key;
+        value_container->key = utils_strdup(key);
         value_container->value = value;
     //endregion
 
@@ -97,8 +98,13 @@ void * hashmap_get(HashMap *hashmap, const char *key) {
 void hashmap_destroy(HashMap *hashmap) {
     vector_clear(hashmap->linearized);
     vector_destroy(hashmap->linearized);
-    for (uint i = 0; i < HASHMAP_BIN_COUNT; ++i)
-        if (hashmap->bins[i])
+
+    for (uint i = 0; i < HASHMAP_BIN_COUNT; ++i) {
+        if (hashmap->bins[i]) {
+            foreach(HashMapValueContainer, hashmap->bins[i], value_container)
+                free((char *)value_container->key);
             vector_destroy(hashmap->bins[i]);
+        }
+    }
     free(hashmap);
 }
