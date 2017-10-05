@@ -139,8 +139,7 @@ uint vector_copy(Vector *src_vector, uint src_index, Vector *dst_vector, uint ds
 }
 
 uint vector_move(Vector *src_vector, uint src_index, Vector *dst_vector, uint dst_index, uint length) {
-    uint src_length = vector_size(src_vector), dst_length = vector_size(dst_vector);
-
+    uint dst_length = vector_size(dst_vector);
     uint safe_length = min(length, dst_length - dst_index);
 
     if (!vector_copy(src_vector, src_index, dst_vector, dst_index, safe_length)) {
@@ -159,6 +158,7 @@ uint vector_move(Vector *src_vector, uint src_index, Vector *dst_vector, uint ds
 
 uint vector_erase(Vector *vector, uint index, uint length) {
     memset(vector->data + index, 0, sizeof(vector->data) * length);
+    return NO_ERROR;
 }
 
 void vector_destroy(Vector *vector) {

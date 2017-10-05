@@ -1,5 +1,5 @@
 CC := gcc
-CFLAGS := -Wall -ansi -pedantic -std=c99
+C_FLAGS := -Wall -ansi -pedantic -std=c99
 
 SRC_DIR := ./src
 INC_DIR := ./include

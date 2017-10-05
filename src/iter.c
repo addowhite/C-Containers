@@ -1,6 +1,14 @@
 #include <stdio.h>
 #include "iter.h"
 
+int iter_range_next(int index, int end) {
+    return (end > index) ? ++index : --index;
+}
+
+int iter_range_end(int start, int end) {
+    return (end > start) ? ++end : --end;
+}
+
 Vector * linearize_iterable(Iterable *iterable) {
     switch (iterable->type) {
         case ITER_TYPE_VECTOR:
