@@ -224,50 +224,143 @@ static uint test_vector_copy(void) {
       return test_failed("test_vector_copy", "Incorrect value after copying to vector", __FILE__, __LINE__);
 
   vector_destroy(vector);
+  return SUCCESS;
 }
 
 static uint test_vector_move(void) {
-  uint data_length = 100;
-  int data[100];
-  for range(i, 0, data_length - 1)
-    data[i] = rand() % 0x11111111;
+  // Int test
+  {
+    uint data_length = 100;
+    int data[100];
+    for range(i, 0, data_length - 1)
+      data[i] = rand() % 0x11111111;
+  
+    Vector *vector = vector_create();
+  
+    for range(i, 0, data_length - 1)
+      vector_push_back(vector, &data[i]);
+  
+    vector_move(vector, 90, vector, 0, 10);
+  
+    for range(i, 0, 9)
+      if (*(int *)vector_get(vector, i) != data[90 + i])
+        return test_failed("test_vector_move", "Incorrect value after moving to vector", __FILE__, __LINE__);
+  
+    for range(i, 90, 99)
+      if (vector_get(vector, i) != NULL)
+        return test_failed("test_vector_move", "Value not cleared after moving", __FILE__, __LINE__);
+  
+    vector_move(vector, 50, vector, 45, 10);
+  
+    for range(i, 45, 54)
+      if (*(int *)vector_get(vector, i) != data[i + 5])
+        return test_failed("test_vector_move", "Incorrect value after moving to vector", __FILE__, __LINE__);
+  
+    for range(i, 55, 59)
+      if (vector_get(vector, i) != NULL)
+        return test_failed("test_vector_move", "Value not cleared after moving", __FILE__, __LINE__);
+  
+    vector_move(vector, 60, vector, 65, 10);
+  
+    for range(i, 65, 74)
+      if (*(int *)vector_get(vector, i) != data[i - 5])
+        return test_failed("test_vector_move", "Incorrect value after moving to vector", __FILE__, __LINE__);
+  
+    for range(i, 60, 64)
+      if (vector_get(vector, i) != NULL)
+        return test_failed("test_vector_move", "Value not cleared after moving", __FILE__, __LINE__);
+  
+    // NEW DATA
+    for range(i, 0, data_length - 1) {
+      data[i] = rand() % 0x11111111;
+      vector_set(vector, i, &data[i]);
+    }
+  
+    vector_move(vector, 0, vector, 10, data_length);
+  
+    for range(i, 0, data_length - 1) {
+      if (i < 10) {
+        if (vector_get(vector, i) != NULL)
+          return test_failed("test_vector_move", "Value not cleared after moving", __FILE__, __LINE__);
+      } else {
+        if (vector_get(vector, i) != &data[i - 10])
+          return test_failed("test_vector_move", "Value incorrect after moving", __FILE__, __LINE__);
+      }
+    }
+  
+    // NEW DATA
+    for range(i, 0, data_length - 1) {
+      data[i] = rand() % 0x11111111;
+      vector_set(vector, i, &data[i]);
+    }
+  
+    vector_move(vector, 10, vector, 0, data_length);
+  
+    for range(i, 0, data_length - 1) {
+      if (i < data_length - 10) {
+        if (vector_get(vector, i) != &data[i + 10])
+          return test_failed("test_vector_move", "Value incorrect after moving", __FILE__, __LINE__);
+      } else {
+        if (vector_get(vector, i) != NULL)
+          return test_failed("test_vector_move", "Value not cleared after moving", __FILE__, __LINE__);
+      }
+    }
+  
+    vector_destroy(vector);
+  }
 
-  Vector *vector = vector_create();
+  // Pointer test
+  {
+    Vector *vector = vector_create();
+    
+    uint vector_count = 10;
+    Vector *vectors[10];
 
-  for range(i, 0, data_length - 1)
-    vector_push_back(vector, &data[i]);
+    uint data_length = 100;
+    int data[10][100];
+    for range(i, 0, vector_count - 1) {
+      vectors[i] = vector_create();
+      for range(j, 0, data_length - 1) {
+        data[i][j] = rand() % 0x11111111;
+        vector_push_back(vectors[i], &data[i][j]);
+      }
+      vector_push_back(vector, &vectors[i]);
+    }
+    
+    vector_move(vector, 0, vector, 2, vector_count);
 
-  vector_move(vector, 90, vector, 0, 10);
+    for range(i, 0, vector_count - 1) {
+      if (i < 2) {
+        if (vector_get(vector, i) != NULL)
+          return test_failed("test_vector_move", "Value was not NULL after moving", __FILE__, __LINE__);
+      } else {
+        if (vector_get(vector, i) != &vectors[i - 2])
+          return test_failed("test_vector_move", "Value was incorrect after moving", __FILE__, __LINE__);
+      }
+    }
 
-  for range(i, 0, 9)
-    if (*(int *)vector_get(vector, i) != data[90 + i])
-      return test_failed("test_vector_move", "Incorrect value after moving to vector", __FILE__, __LINE__);
+    // RESET DATA
+    for range(i, 0, vector_count - 1)
+      vector_set(vector, i, &vectors[i]);
 
-  for range(i, 90, 99)
-    if (vector_get(vector, i) != NULL)
-      return test_failed("test_vector_move", "Value not cleared after moving", __FILE__, __LINE__);
+    vector_move(vector, 2, vector, 0, vector_count);
+    
+    for range(i, 0, vector_count - 1) {
+      if (i > vector_count - 3) {
+        if (vector_get(vector, i) != NULL)
+          return test_failed("test_vector_move", "Value was not NULL after moving", __FILE__, __LINE__);
+      } else {
+        if (vector_get(vector, i) != &vectors[i + 2])
+          return test_failed("test_vector_move", "Value was incorrect after moving", __FILE__, __LINE__);
+      }
+    }
 
-  vector_move(vector, 50, vector, 45, 10);
+    for range(i, 0, vector_count - 1)
+      vector_destroy(vectors[i]);
 
-  for range(i, 45, 54)
-    if (*(int *)vector_get(vector, i) != data[i + 5])
-      return test_failed("test_vector_move", "Incorrect value after moving to vector", __FILE__, __LINE__);
-
-  for range(i, 55, 59)
-    if (vector_get(vector, i) != NULL)
-      return test_failed("test_vector_move", "Value not cleared after moving", __FILE__, __LINE__);
-
-  vector_move(vector, 60, vector, 65, 10);
-
-  for range(i, 65, 74)
-    if (*(int *)vector_get(vector, i) != data[i - 5])
-      return test_failed("test_vector_move", "Incorrect value after moving to vector", __FILE__, __LINE__);
-
-  for range(i, 60, 64)
-    if (vector_get(vector, i) != NULL)
-      return test_failed("test_vector_move", "Value not cleared after moving", __FILE__, __LINE__);
-
-  vector_destroy(vector);
+    vector_destroy(vector);
+  }
+  return SUCCESS;
 }
 
 static uint test_vector_erase(void) {

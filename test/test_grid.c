@@ -72,7 +72,7 @@ static uint test_grid_shift(void) {
   int data[100][100];
   for range(x, 0, width - 1)
     for range(y, 0, height - 1)
-      data[x][y] = rand() % 10;
+      data[x][y] = rand() % 0x11111111;
 
   Grid *grid = grid_create(width, height);
 
