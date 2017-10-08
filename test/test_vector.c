@@ -399,6 +399,41 @@ static uint test_vector_erase(void) {
   return SUCCESS;
 }
 
+static uint test_vector_write_to_file(void) {
+  Vector *write_vector = vector_create();
+
+  int data[10];
+  for range(i, 0, 9) {
+    data[i] = i + 255;
+    vector_push_back(write_vector, &data[i]);
+  }
+
+  FILE *file = fopen("vector_write_test", "w+");
+  if (!vector_write_to_file(write_vector, file, sizeof(int)))
+    return test_failed("test_vector_write_to_file", "Failed to write vector data to file", __FILE__, __LINE__);
+  fclose(file);
+
+  Vector *read_vector = vector_create();
+
+  file = fopen("vector_write_test", "r");
+  if (!vector_read_from_file(read_vector, file, sizeof(int)))
+    return test_failed("test_vector_write_to_file", "Failed to read vector data from file", __FILE__, __LINE__);
+  fclose(file);
+
+  printf("Vector size: %u\n", vector_size(read_vector));
+
+  uint i = 0;
+  foreach(int, read_vector, val) {
+    printf("%d: %d\n", i, *val);
+    if (*val != data[i++])
+      return test_failed("test_vector_write_to_file", "Incorrect data after reading from file", __FILE__, __LINE__);
+  }
+
+  vector_destroy(read_vector);
+  vector_destroy(write_vector);
+  return SUCCESS;
+}
+
 uint test_vector(void) {
   printf("\nTesting vector...\n");
 
@@ -413,6 +448,7 @@ uint test_vector(void) {
   CHECK_TEST(test_vector_copy());
   CHECK_TEST(test_vector_move());
   CHECK_TEST(test_vector_erase());
+  CHECK_TEST(test_vector_write_to_file());
 
   printf("All vector tests passed!\n");
   return SUCCESS;

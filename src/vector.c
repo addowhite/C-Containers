@@ -161,6 +161,35 @@ uint vector_erase(Vector *vector, uint index, uint length) {
     return NO_ERROR;
 }
 
+uint vector_read_from_file(Vector *vector, FILE *file, uint element_size) {
+    vector_clear(vector);
+    char *value;
+    int current_char = 0;
+    while (current_char != EOF) {
+        value = malloc(element_size);
+        for range(i, 0, element_size - 1) {
+            value[i] = current_char = fgetc(file);
+            if (current_char == EOF && value[0] == '\0') {
+                free(value);
+                return NO_ERROR;
+            }
+        }
+        vector_push_back(vector, value);
+    }
+
+    return NO_ERROR;
+}
+
+uint vector_write_to_file(Vector *vector, FILE *file, uint element_size) {
+    foreach(char, vector, iter)
+        for range(i, 0, element_size - 1)
+            if (fputc(*(iter + i), file) == EOF)
+                return ERROR;
+    if (fputc('\0', file) == EOF)
+        return ERROR;
+    return NO_ERROR;
+}
+
 void vector_destroy(Vector *vector) {
     free(vector->data);
     free(vector);
