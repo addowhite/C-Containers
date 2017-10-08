@@ -404,7 +404,7 @@ static uint test_vector_write_to_file(void) {
 
   int data[10];
   for range(i, 0, 9) {
-    data[i] = i + 255;
+    data[i] = rand() % 0x11111111;
     vector_push_back(write_vector, &data[i]);
   }
 
@@ -420,14 +420,10 @@ static uint test_vector_write_to_file(void) {
     return test_failed("test_vector_write_to_file", "Failed to read vector data from file", __FILE__, __LINE__);
   fclose(file);
 
-  printf("Vector size: %u\n", vector_size(read_vector));
-
   uint i = 0;
-  foreach(int, read_vector, val) {
-    printf("%d: %d\n", i, *val);
+  foreach(int, read_vector, val)
     if (*val != data[i++])
       return test_failed("test_vector_write_to_file", "Incorrect data after reading from file", __FILE__, __LINE__);
-  }
 
   vector_destroy(read_vector);
   vector_destroy(write_vector);
