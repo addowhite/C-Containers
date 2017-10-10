@@ -408,15 +408,15 @@ static uint test_vector_write_to_file(void) {
     vector_push_back(write_vector, &data[i]);
   }
 
-  FILE *file = fopen("vector_write_test", "w+");
-  if (!vector_write_to_file(write_vector, file, sizeof(int)))
+  FILE *file = fopen("vector_write_test", "wb");
+  if (!vector_write_to_file(write_vector, sizeof(int), file))
     return test_failed("test_vector_write_to_file", "Failed to write vector data to file", __FILE__, __LINE__);
   fclose(file);
 
   Vector *read_vector = vector_create();
 
-  file = fopen("vector_write_test", "r");
-  if (!vector_read_from_file(read_vector, file, sizeof(int)))
+  file = fopen("vector_write_test", "rb");
+  if (!vector_read_from_file(read_vector, sizeof(int), file))
     return test_failed("test_vector_write_to_file", "Failed to read vector data from file", __FILE__, __LINE__);
   fclose(file);
 

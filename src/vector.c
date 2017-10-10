@@ -161,32 +161,31 @@ uint vector_erase(Vector *vector, uint index, uint length) {
     return NO_ERROR;
 }
 
-uint vector_read_from_file(Vector *vector, FILE *file, uint element_size) {
-    vector_clear(vector);
-    char *value;
-    int current_char = 0;
-    while (current_char != EOF) {
-        value = malloc(element_size);
-        for range(i, 0, element_size - 1) {
-            value[i] = current_char = fgetc(file);
-            if (current_char == EOF && value[0] == '\0') {
-                free(value);
-                return NO_ERROR;
-            }
-        }
-        vector_push_back(vector, value);
-    }
+uint vector_read_from_file(Vector *vector, uint element_size, FILE *file) {
+	uint vector_length;
+	fread(&vector_length, sizeof(vector_length), 1, file);
+    vector_resize(vector, vector_length);
+
+    unsigned char *values = malloc(element_size * vector_length);
+    fread(values, element_size * vector_length, 1, file);
+
+    for range(i, 0, vector_length - 1)
+		vector_set(vector, i, &values[element_size * i]);
 
     return NO_ERROR;
 }
 
-uint vector_write_to_file(Vector *vector, FILE *file, uint element_size) {
-    foreach(char, vector, iter)
-        for range(i, 0, element_size - 1)
-            if (fputc(*(iter + i), file) == EOF)
-                return ERROR;
-    if (fputc('\0', file) == EOF)
-        return ERROR;
+uint vector_write_to_file(Vector *vector, uint element_size, FILE *file) {
+	uint vector_length = vector_size(vector);
+	fwrite(&vector_length, sizeof(vector_length), 1, file);
+
+	unsigned char *values = malloc(element_size * vector_length);
+	for range(i, 0, vector_length - 1)
+		for range(j, 0, element_size - 1)
+			values[i * element_size + j] = *((unsigned char *)vector_get(vector, i) + j);
+
+    fwrite(values, element_size * vector_length, 1, file);
+    free(values);
     return NO_ERROR;
 }
 

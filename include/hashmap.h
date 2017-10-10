@@ -25,6 +25,8 @@ typedef struct HashMapValueContainer {
 HashMap * hashmap_create();
 uint hashmap_set(HashMap *hashmap, const char *key, void *value);
 void * hashmap_get(HashMap *hashmap, const char *key);
+uint hashmap_read_from_file(HashMap *hashmap, uint element_size, FILE *file);
+uint hashmap_write_to_file(HashMap *hashmap, uint element_size, FILE *file);
 void hashmap_destroy(HashMap *hashmap);
 
 #endif // _HASHMAP_H_

@@ -52,3 +52,6 @@ Mkfile.old
 dkms.conf
 /test_containers
 vector_write_test
+grid_write_test
+hashmap_write_test
+*.bak

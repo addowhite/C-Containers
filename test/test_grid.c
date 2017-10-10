@@ -108,6 +108,45 @@ static uint test_grid_shift(void) {
               return test_failed("test_grid_shift", "Value not null after shift", __FILE__, __LINE__);
     }
   }
+  return SUCCESS;
+}
+
+static uint test_grid_write_to_file(void) {
+	Grid *grid_write = grid_create(4, 6);
+	Grid *grid_read  = grid_create(0, 0);
+
+	int data[24], i = 0;
+	for range(y, 0, grid_get_height(grid_write) - 1) {
+		for range(x, 0, grid_get_width(grid_write) - 1) {
+			data[i] = rand() % 0x11111111;
+			grid_set(grid_write, x, y, data + i++);
+		}
+	}
+
+	FILE *file = fopen("grid_write_test", "wb");
+	if (!grid_write_to_file(grid_write, sizeof(int), file))
+		return test_failed("test_grid_write_to_file", "Failed to write grid data to file", __FILE__, __LINE__);
+	fclose(file);
+
+	file = fopen("grid_write_test", "rb");
+	if (!grid_read_from_file(grid_read, sizeof(int), file))
+		return test_failed("test_grid_write_to_file", "Failed to read grid data from file", __FILE__, __LINE__);
+	fclose(file);
+
+	if (grid_get_width(grid_write) != grid_get_width(grid_read))
+		return test_failed("test_grid_write_to_file", "Grid width incorrect after writing to file and reading back again", __FILE__, __LINE__);
+
+	if (grid_get_height(grid_write) != grid_get_height(grid_read))
+		return test_failed("test_grid_write_to_file", "Grid height incorrect after writing to file and reading back again", __FILE__, __LINE__);
+
+	for range(y, 0, grid_get_height(grid_read) - 1)
+		for range(x, 0, grid_get_width(grid_read) - 1)
+			if (*(int *)grid_get(grid_read, x, y) != *(int *)grid_get(grid_write, x, y))
+				return test_failed("test_grid_write_to_file", "Value incorrect after writing to file and reading back again", __FILE__, __LINE__);
+
+	grid_destroy(grid_read);
+	grid_destroy(grid_write);
+	return SUCCESS;
 }
 
 uint test_grid(void) {
@@ -116,6 +155,7 @@ uint test_grid(void) {
   CHECK_TEST(test_grid_create());
   CHECK_TEST(test_grid_set());
   CHECK_TEST(test_grid_shift());
+  CHECK_TEST(test_grid_write_to_file());
 
   printf("All grid tests passed!\n");
   return SUCCESS;

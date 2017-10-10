@@ -33,8 +33,8 @@ uint vector_clear(Vector *vector);
 uint vector_copy(Vector *src_vector, uint src_index, Vector *dst_vector, uint dst_index, uint length);
 uint vector_move(Vector *src_vector, uint src_index, Vector *dst_vector, uint dst_index, uint length);
 uint vector_erase(Vector *vector, uint index, uint length);
-uint vector_read_from_file(Vector *vector, FILE *file, uint element_size);
-uint vector_write_to_file(Vector *vector, FILE *file, uint element_size);
+uint vector_read_from_file(Vector *vector, uint element_size, FILE *file);
+uint vector_write_to_file(Vector *vector, uint element_size, FILE *file);
 void vector_destroy(Vector *vector);
 
 #endif // _VECTOR_H_

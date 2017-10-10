@@ -95,6 +95,55 @@ void * hashmap_get(HashMap *hashmap, const char *key) {
     return NULL;
 }
 
+uint hashmap_read_from_file(HashMap *hashmap, uint element_size, FILE *file) {
+	uint key_length;
+	char *key, *value;
+	while (!feof(file)) {
+		if (fread(&key_length, sizeof(key_length), 1, file) != 1) {
+			if (feof(file)) break;
+			fprintf(stderr, "%s: Failed to read hashmap key length from file\n", __FILE__);
+			return ERROR;
+		}
+
+		key = malloc(key_length + 1);
+		if (!key) {
+			fprintf(stderr, "%s: Failed to allocate memory for hashmap key\n", __FILE__);
+			return ERROR;
+		}
+		if (fgets(key, key_length + 1, file) == NULL) {
+			fprintf(stderr, "%s: Error reading hashmap key from file\n", __FILE__);
+			return ERROR;
+		}
+
+		value = malloc(element_size);
+		if (fread(value, element_size, 1, file) != 1) {
+			if (feof(file)) {
+				fprintf(stderr, "%s: Unexpected EOF encountered\n", __FILE__);
+			} else {
+				fprintf(stderr, "%s: Error reading hashmap value from file\n", __FILE__);
+			}
+			return ERROR;
+		}
+
+		if (!hashmap_set(hashmap, key, value)) {
+			fprintf(stderr, "%s: Failed to set hashmap value\n", __FILE__);
+			return ERROR;
+		}
+	}
+	return NO_ERROR;
+}
+
+uint hashmap_write_to_file(HashMap *hashmap, uint element_size, FILE *file) {
+	uint key_length;
+	foreach(HashMapValueContainer, hashmap, value_container) {
+		key_length = strlen(value_container->key);
+		fwrite(&key_length, sizeof(key_length), 1, file);
+		fputs(value_container->key, file);
+		fwrite(value_container->value, element_size, 1, file);
+	}
+	return NO_ERROR;
+}
+
 void hashmap_destroy(HashMap *hashmap) {
     vector_clear(hashmap->linearized);
     vector_destroy(hashmap->linearized);

@@ -18,8 +18,8 @@ Grid * grid_create(uint width, uint height) {
         fprintf(stderr, "%s: Failed to create grid\n", __FILE__);
         return NULL;
     }
-    new_grid->type = ITER_TYPE_GRID;
-    new_grid->width = width;
+    new_grid->type   = ITER_TYPE_GRID;
+    new_grid->width  = width;
     new_grid->height = height;
     new_grid->data = vector_create();
     if (!new_grid->data) {
@@ -80,6 +80,20 @@ uint grid_shift(Grid *grid, int offset_x, int offset_y) {
             vector_erase(grid->data, y * width + ((offset_x > 0) ? 0 : width + offset_x), abs(offset_x));
     }
     return NO_ERROR;
+}
+
+uint grid_read_from_file(Grid *grid, uint element_size, FILE *file) {
+	fread(&grid->width,  sizeof(grid->width),  1, file);
+	fread(&grid->height, sizeof(grid->height), 1, file);
+	vector_read_from_file(grid->data, element_size, file);
+	return NO_ERROR;
+}
+
+uint grid_write_to_file(Grid *grid, uint element_size, FILE *file) {
+	fwrite(&grid->width,  sizeof(grid->width),  1, file);
+	fwrite(&grid->height, sizeof(grid->height), 1, file);
+	vector_write_to_file(grid->data, element_size, file);
+	return NO_ERROR;
 }
 
 void grid_destroy(Grid *grid) {
