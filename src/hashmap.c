@@ -133,6 +133,19 @@ uint hashmap_read_from_file(HashMap *hashmap, uint element_size, FILE *file) {
 	return NO_ERROR;
 }
 
+uint hashmap_size(HashMap *hashmap) {
+    uint size = 0;
+    for (Vector **iter = hashmap->bins, **end = iter + HASHMAP_BIN_COUNT; iter != end; ++iter)
+        if (*iter) size += vector_size(*iter);
+    return size;
+}
+
+uint hashmap_clear(HashMap *hashmap) {
+    for (Vector **iter = hashmap->bins, **end = iter + HASHMAP_BIN_COUNT; iter != end; ++iter)
+        if (*iter) vector_clear(*iter);
+    return NO_ERROR;
+}
+
 uint hashmap_write_to_file(HashMap *hashmap, uint element_size, FILE *file) {
 	uint key_length;
 	foreach(HashMapValueContainer, hashmap, value_container) {

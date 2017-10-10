@@ -40,6 +40,72 @@ static uint test_hashmap_set(void) {
   return SUCCESS;
 }
 
+static uint test_hashmap_size(void) {
+  HashMap *hashmap = hashmap_create();
+
+  uint value_count = 20;
+  char keys[20][11];
+  int values[20];
+  for (uint i = 0; i < value_count / 2; ++i) {
+    values[i] = rand() % 0x11111111;
+    string_fill_random(keys[i], 10);
+    keys[i][10] = 0;
+    hashmap_set(hashmap, keys[i], &values[i]);
+  }
+
+  uint size = 0;
+  foreach(HashMapValueContainer, hashmap, iter) size++;
+
+  if (hashmap_size(hashmap) != size)
+  	return test_failed("test_hashmap_size", "Size was incorrect after adding values", __FILE__, __LINE__);
+
+  for (uint i = value_count / 2; i < value_count; ++i) {
+    values[i] = rand() % 0x11111111;
+    string_fill_random(keys[i], 10);
+    keys[i][10] = 0;
+    hashmap_set(hashmap, keys[i], &values[i]);
+  }
+
+  size = 0;
+  foreach(HashMapValueContainer, hashmap, iter) size++;
+
+  if (hashmap_size(hashmap) != size)
+  	return test_failed("test_hashmap_size", "Size was incorrect after adding values", __FILE__, __LINE__);
+
+  hashmap_clear(hashmap);
+
+  size = 0;
+  foreach(HashMapValueContainer, hashmap, iter) size++;
+
+  if (hashmap_size(hashmap) != size)
+  	return test_failed("test_hashmap_size", "Size was incorrect after adding values", __FILE__, __LINE__);
+
+  hashmap_destroy(hashmap);
+  return SUCCESS;
+}
+
+static uint test_hashmap_clear(void) {
+  HashMap *hashmap = hashmap_create();
+
+  uint value_count = 20;
+  char keys[20][11];
+  int values[20];
+  for (uint i = 0; i < value_count; ++i) {
+    values[i] = rand() % 0x11111111;
+    string_fill_random(keys[i], 10);
+    keys[i][10] = 0;
+    hashmap_set(hashmap, keys[i], &values[i]);
+  }
+
+  hashmap_clear(hashmap);
+
+  if (hashmap_size(hashmap) != 0)
+  	return test_failed("test_hashmap_clear", "Hashmap was not empty after clearing", __FILE__, __LINE__);
+
+  hashmap_destroy(hashmap);
+  return SUCCESS;
+}
+
 static uint test_hashmap_write_to_file(void) {
 	HashMap *hashmap_read  = hashmap_create();
 	HashMap *hashmap_write = hashmap_create();
@@ -86,6 +152,8 @@ uint test_hashmap(void) {
 
   CHECK_TEST(test_hashmap_create());
   CHECK_TEST(test_hashmap_set());
+  CHECK_TEST(test_hashmap_size());
+  CHECK_TEST(test_hashmap_clear());
   CHECK_TEST(test_hashmap_write_to_file());
 
   printf("All hashmap tests passed!\n");
