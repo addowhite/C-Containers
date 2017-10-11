@@ -14,6 +14,8 @@
 
 #define HASHMAP_BIN_COUNT 1024
 
+#include <stdio.h>
+
 struct PrivateHashMap;
 typedef struct PrivateHashMap HashMap;
 
