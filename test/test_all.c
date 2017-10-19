@@ -5,6 +5,7 @@
 #include "test_grid.h"
 #include "test_hashmap.h"
 #include "test_iter.h"
+#include "test_string.h"
 
 int main(int argc, char **argv) {
   // Redirect all errors from stderr to the file "errors.txt"
@@ -18,5 +19,6 @@ int main(int argc, char **argv) {
   test_vector();
   test_grid();
   test_hashmap();
+  test_string();
   return 0;
 }
