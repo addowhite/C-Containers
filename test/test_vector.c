@@ -13,7 +13,7 @@ static uint test_vector_create(void) {
   if (vector_size(vector) != 0)
     return test_failed("test_vector_create", "Initial size was incorrect", __FILE__, __LINE__);
 
-  if (vector_capacity(vector) != 1)
+  if (vector_capacity(vector) != 0)
     return test_failed("test_vector_create", "Initial capacity was incorrect", __FILE__, __LINE__);
 
   vector_destroy(vector);
@@ -29,7 +29,7 @@ static uint test_vector_resize() {
   if (vector_size(vector) != 5)
     return test_failed("test_vector_resize", "Size after resize operation incorrect", __FILE__, __LINE__);
 
-  if (vector_capacity(vector) != 7)
+  if (vector_capacity(vector) != 8)
     return test_failed("test_vector_resize", "Capacity after resize operation incorrect", __FILE__, __LINE__);
 
   if (!vector_resize(vector, 100))
@@ -38,7 +38,7 @@ static uint test_vector_resize() {
   if (vector_size(vector) != 100)
     return test_failed("test_vector_resize", "Size after resize operation incorrect", __FILE__, __LINE__);
 
-  if (vector_capacity(vector) != 150)
+  if (vector_capacity(vector) != 128)
     return test_failed("test_vector_resize", "Capacity after resize operation incorrect", __FILE__, __LINE__);
 
   if (!vector_resize(vector, 100))
@@ -47,7 +47,7 @@ static uint test_vector_resize() {
   if (vector_size(vector) != 100)
     return test_failed("test_vector_resize", "Size after resize operation incorrect", __FILE__, __LINE__);
 
-  if (vector_capacity(vector) != 150)
+  if (vector_capacity(vector) != 128)
     return test_failed("test_vector_resize", "Capacity after resize operation incorrect", __FILE__, __LINE__);
 
   for range(i, 0, vector_size(vector) - 1)
@@ -239,9 +239,9 @@ static uint test_vector_move(void) {
   
     for range(i, 0, data_length - 1)
       vector_push_back(vector, &data[i]);
-  
+
     vector_move(vector, 90, vector, 0, 10);
-  
+
     for range(i, 0, 9)
       if (*(int *)vector_get(vector, i) != data[90 + i])
         return test_failed("test_vector_move", "Incorrect value after moving to vector", __FILE__, __LINE__);
@@ -249,13 +249,13 @@ static uint test_vector_move(void) {
     for range(i, 90, 99)
       if (vector_get(vector, i) != NULL)
         return test_failed("test_vector_move", "Value not cleared after moving", __FILE__, __LINE__);
-  
+
     vector_move(vector, 50, vector, 45, 10);
-  
+
     for range(i, 45, 54)
       if (*(int *)vector_get(vector, i) != data[i + 5])
         return test_failed("test_vector_move", "Incorrect value after moving to vector", __FILE__, __LINE__);
-  
+        
     for range(i, 55, 59)
       if (vector_get(vector, i) != NULL)
         return test_failed("test_vector_move", "Value not cleared after moving", __FILE__, __LINE__);

@@ -1,16 +1,7 @@
 #ifndef _HASHMAP_H_
 #define _HASHMAP_H_
 
-#ifndef uint
-#define uint unsigned int
-#endif
-
-#ifndef uchar
-#define uchar unsigned char
-#endif
-
-#define ERROR 0
-#define NO_ERROR 1
+#include "utils.h"
 
 #define HASHMAP_BIN_COUNT 1024
 

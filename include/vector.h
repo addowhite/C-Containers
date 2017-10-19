@@ -9,12 +9,9 @@
 #define uchar unsigned char
 #endif
 
-#define ERROR 0
-#define NO_ERROR 1
-
 #include <stdio.h>
 
-#define INITIAL_CAPACITY 1
+#define VECTOR_MIN_CAPACITY 1
 
 struct PrivateVector;
 typedef struct PrivateVector Vector;
@@ -30,8 +27,8 @@ uint vector_insert(Vector *vector, uint index, void *value);
 int vector_find_index(Vector *vector, void *value);
 uint vector_push_vector(Vector *dst_vector, Vector *src_vector);
 uint vector_clear(Vector *vector);
-uint vector_copy(Vector *src_vector, uint src_index, Vector *dst_vector, uint dst_index, uint length);
-uint vector_move(Vector *src_vector, uint src_index, Vector *dst_vector, uint dst_index, uint length);
+uint vector_copy(Vector *src_vector, int src_index, Vector *dst_vector, int dst_index, uint length);
+uint vector_move(Vector *src_vector, int src_index, Vector *dst_vector, int dst_index, uint length);
 uint vector_erase(Vector *vector, uint index, uint length);
 uint vector_read_from_file(Vector *vector, uint element_size, FILE *file);
 uint vector_write_to_file(Vector *vector, uint element_size, FILE *file);

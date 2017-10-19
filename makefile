@@ -19,4 +19,3 @@ $(TARGET): $(OBJECTS)
 	@echo [INFO] Creating Executable [$(TARGET)]
 	@echo [LINK]
 	@$(CC) -o $@ $^ $(INCLUDES)
-	@./$(TARGET)

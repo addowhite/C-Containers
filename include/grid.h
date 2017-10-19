@@ -1,16 +1,7 @@
 #ifndef _GRID_H_
 #define _GRID_H_
 
-#ifndef uint
-#define uint unsigned int
-#endif
-
-#ifndef uchar
-#define uchar unsigned char
-#endif
-
-#define ERROR 0
-#define NO_ERROR 1
+#include "utils.h"
 
 struct PrivateGrid;
 typedef struct PrivateGrid Grid;
