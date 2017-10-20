@@ -255,7 +255,5 @@ uint vector_write_to_file(Vector *vector, uint element_size, FILE *file) {
 
 void vector_destroy(Vector *vector) {
   free(vector->data);
-  vector->data = NULL;
   free(vector);
-  vector = NULL;
 }

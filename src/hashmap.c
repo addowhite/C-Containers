@@ -119,21 +119,31 @@ uint hashmap_read_from_file(HashMap *hashmap, uint element_size, FILE *file) {
     }
     if (fgets(key, key_length + 1, file) == NULL) {
       fprintf(stderr, "%s: Error reading hashmap key from file\n", __FILE__);
+      free(key);
       return ERROR;
     }
 
     value = malloc(element_size);
+    if (!value) {
+      fprintf(stderr, "%s: Failed to allocate memory for hashmap value\n", __FILE__);
+      free(key);
+      return ERROR;
+    }
     if (fread(value, element_size, 1, file) != 1) {
       if (feof(file)) {
         fprintf(stderr, "%s: Unexpected EOF encountered\n", __FILE__);
       } else {
         fprintf(stderr, "%s: Error reading hashmap value from file\n", __FILE__);
       }
+      free(key);
+      free(value);
       return ERROR;
     }
 
     if (!hashmap_set(hashmap, key, value)) {
       fprintf(stderr, "%s: Failed to set hashmap value\n", __FILE__);
+      free(key);
+      free(value);
       return ERROR;
     }
   }
@@ -157,9 +167,7 @@ uint hashmap_clear(HashMap *hashmap) {
     if (*iter) {
       foreach(HashMapValueContainer, *iter, value_container) {
         free((char *)value_container->key);
-        value_container->key = NULL;
         free(value_container);
-        value_container = NULL;
       }
       vector_clear(*iter);
     }
@@ -174,13 +182,10 @@ void hashmap_destroy(HashMap *hashmap) {
     if (*iter) {
       foreach(HashMapValueContainer, *iter, value_container) {
         free((char *)value_container->key);
-        value_container->key = NULL;
         free(value_container);
-        value_container = NULL;
       }
       vector_destroy(*iter);
     }
   }
   free(hashmap);
-  hashmap = NULL;
 }

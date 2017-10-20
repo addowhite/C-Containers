@@ -100,5 +100,4 @@ uint grid_write_to_file(Grid *grid, uint element_size, FILE *file) {
 void grid_destroy(Grid *grid) {
   vector_destroy(grid->data);
   free(grid);
-  grid = NULL;
 }

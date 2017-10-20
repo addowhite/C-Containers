@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <stdarg.h>
 #include <stdint.h>
 #include "px_string.h"
 #include "iter.h"
@@ -11,17 +10,47 @@ struct PrivateString {
   char buffer[];
 };
 
-String * string_create(char *value) {
-  uint length = strlen(value);
-  String *new_str = malloc(sizeof(*new_str) + length + 1);
-  if (!new_str) {
+String * string_create_vargs(const char *format, va_list args) {
+  int length = 5, required_length = 0;
+  char *str = NULL;
+
+  while (1) {
+    char *new_buffer = realloc(str, length + 1);
+    if (!new_buffer) {
+      fprintf(stderr, "%s[%d]: Failed to allocate memory for character array\n", __FILE__, __LINE__);
+      free(str);
+      return NULL;
+    }
+    str = new_buffer;
+
+    va_list args_copy;
+    va_copy(args_copy, args);
+    required_length = vsnprintf(str, length + 1, format, args_copy);
+    va_end(args_copy);
+
+    if (length == required_length)
+      break;
+
+    length = required_length;
+  }
+
+  String *new_string = malloc(sizeof(*new_string) + length + 1);
+  if (!new_string) {
     fprintf(stderr, "%s: Failed to allocate memory for string\n", __FILE__);
     return NULL;
   }
-  new_str->type = ITER_TYPE_STRING;
-  new_str->length = length;
-  memcpy(new_str->buffer, value, length);
-  new_str->buffer[length] = 0;
+  new_string->type = ITER_TYPE_STRING;
+  new_string->length = length;
+  memcpy(new_string->buffer, str, length);
+  new_string->buffer[length] = 0;
+  return new_string;
+}
+
+String * string_create(const char *format, ...) {
+  va_list args;
+  va_start(args, format);
+  String *new_str = string_create_vargs(format, args);
+  va_end(args);
   return new_str;
 }
 

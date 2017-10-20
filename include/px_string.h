@@ -1,13 +1,15 @@
 #ifndef _STRING_H_
 #define _STRING_H_
 
+#include <stdarg.h>
 #include <string.h>
 #include "utils.h"
 
 struct PrivateString;
 typedef struct PrivateString String;
 
-String * string_create(char *value);
+String * string_create_vargs(const char *format, va_list args);
+String * string_create(const char *format, ...);
 char *string_c_str(String *str);
 uint string_length(String *str);
 char string_get(String *str, uint index);
